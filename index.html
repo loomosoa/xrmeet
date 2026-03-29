@@ -147,7 +147,7 @@
       }
 
       /* Popup Styling */
-      #contact-popup {
+      .popup-overlay {
         display: none;
         position: fixed;
         inset: 0;
@@ -158,7 +158,7 @@
         backdrop-filter: blur(8px);
       }
 
-      #contact-popup.active {
+      .popup-overlay.active {
         display: flex;
       }
 
@@ -254,7 +254,7 @@
             stakes are a fortune.
           </p>
           <div class="flex gap-4">
-            <button class="brutal-btn contact-trigger">Request Audit</button>
+            <button class="brutal-btn audit-trigger">Request Audit</button>
           </div>
         </div>
         <div class="reveal">
@@ -745,13 +745,60 @@
     </footer>
 
     <!-- Contact Popup -->
-    <div id="contact-popup" class="px-6">
+    <div id="contact-popup" class="popup-overlay px-6">
       <div
         class="popup-content bg-white border-thick max-w-lg w-full p-8 md:p-12 relative"
       >
         <button
-          id="close-popup"
-          class="absolute top-4 right-4 hover:text-[#FF3300] transition-colors"
+          class="close-popup absolute top-4 right-4 hover:text-[#FF3300] transition-colors"
+        >
+          <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+
+        <div class="mb-8">
+          <div class="mono text-[#FF3300] font-bold text-sm uppercase mb-2">
+            // Direct Line
+          </div>
+          <h2 class="text-4xl font-black uppercase mb-4">Contact</h2>
+          <p class="text-gray-500 font-medium">
+            Reach out to us via email for any inquiries.
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <a
+            href="mailto:vault@xrmeet.tech"
+            class="block w-full border-thick p-6 hover:bg-gray-50 transition-colors group"
+          >
+            <div class="mono text-xs uppercase font-bold mb-2 opacity-50">
+              Email Address
+            </div>
+            <div class="text-2xl font-black flex justify-between items-center">
+              <span>vault@xrmeet.tech</span>
+              <i
+                data-lucide="arrow-up-right"
+                class="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+              ></i>
+            </div>
+          </a>
+        </div>
+
+        <div
+          class="mt-12 flex items-center space-x-4 text-xs font-bold mono uppercase opacity-50"
+        >
+          <span class="w-2 h-2 bg-[#FF3300] rounded-full animate-pulse"></span>
+          <span>Encrypted Session Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit Popup -->
+    <div id="audit-popup" class="popup-overlay px-6">
+      <div
+        class="popup-content bg-white border-thick max-w-lg w-full p-8 md:p-12 relative"
+      >
+        <button
+          class="close-popup absolute top-4 right-4 hover:text-[#FF3300] transition-colors"
         >
           <i data-lucide="x" class="w-8 h-8"></i>
         </button>
@@ -832,36 +879,53 @@
 
       // Popup Logic
       const contactPopup = document.getElementById("contact-popup");
-      const closePopup = document.getElementById("close-popup");
-      const triggers = document.querySelectorAll(".contact-trigger");
+      const auditPopup = document.getElementById("audit-popup");
+      const contactTriggers = document.querySelectorAll(".contact-trigger");
+      const auditTriggers = document.querySelectorAll(".audit-trigger");
+      const closeButtons = document.querySelectorAll(".close-popup");
 
-      const openModal = () => {
-        contactPopup.classList.add("active");
+      const openModal = (modal) => {
+        modal.classList.add("active");
         document.body.style.overflow = "hidden";
       };
 
-      const closeModal = () => {
-        contactPopup.classList.remove("active");
+      const closeModal = (modal) => {
+        modal.classList.remove("active");
         document.body.style.overflow = "";
       };
 
-      triggers.forEach((trigger) => {
+      const closeAllModals = () => {
+        document.querySelectorAll(".popup-overlay").forEach(closeModal);
+      };
+
+      contactTriggers.forEach((trigger) => {
         trigger.addEventListener("click", (e) => {
           e.preventDefault();
-          openModal();
+          openModal(contactPopup);
         });
       });
 
-      closePopup.addEventListener("click", closeModal);
+      auditTriggers.forEach((trigger) => {
+        trigger.addEventListener("click", (e) => {
+          e.preventDefault();
+          openModal(auditPopup);
+        });
+      });
 
-      contactPopup.addEventListener("click", (e) => {
-        if (e.target === contactPopup) closeModal();
+      closeButtons.forEach((btn) => {
+        btn.addEventListener("click", closeAllModals);
+      });
+
+      document.querySelectorAll(".popup-overlay").forEach((overlay) => {
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) closeAllModals();
+        });
       });
 
       // ESC key to close
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && contactPopup.classList.contains("active")) {
-          closeModal();
+        if (e.key === "Escape") {
+          closeAllModals();
         }
       });
     </script>
